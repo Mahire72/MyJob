@@ -3,7 +3,7 @@ import json
 from io import BytesIO
 
 
-ACCES_POINT = 'https://entreprise.francetravail.fr/connexion/oauth2/access_token?realm=%2Fpartenaire'
+ACCESS_POINT = 'https://entreprise.francetravail.fr/connexion/oauth2/access_token?realm=%2Fpartenaire'
 Recherche_API = 'https://api.francetravail.io/partenaire/offresdemploi/v2/offres/search'
 
 client_id = "PAR_futurejob_f111ac9cc68d1d5b397eb74df49e7eaf3c647c94228310f2dae8c33d63156b1d"
@@ -18,19 +18,44 @@ def get_token():
         "&client_secret="+client_secret + 
         "&scope=" +scope
     )
-    reponse,data = httplib2.Http().request(ACCES_POINT, method='POST', headers=header, body=body)
+    reponse,data = httplib2.Http().request(ACCESS_POINT, method='POST', headers=header, body=body)
 
     p = json.loads(data.decode())
     return p["access_token"]
    
 def toujours_valide(token):
-    headers = {'Authorization' : ''+ token, 'Accept' : 'application/json'}
-    print(headers)
-    url = "https://api.francetravail.io/partenaire/offresdemploi/v2/offres/search?commune=75001"
+    headers = {'Authorization' : 'Bearer '+ token, 'Accept' : 'application/json'}
+    
+    url = "https://api.francetravail.io/partenaire/offresdemploi/v2/offres/search?motsCles=developpeur"
 
     reponse,data = httplib2.Http().request(url ,method='GET', headers=headers)
     
-    return reponse.status 
+    return reponse.status != 400
 
-token = get_token()
-print(toujours_valide(token))
+
+def jobs_ville(code_postal, token):
+    # On a besoin du code INSEE pour faire la requete France Travail
+    #Pour faire cela on se sert d'une nouvelle API de opendatasoft (base de donnees des communes)
+
+    url = "https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/correspondance-code-cedex-code-insee/records/?limit=10&offset=0&where=code+%3D+" + str(code_postal)
+    reponse, data= httplib2.Http().request(url, method='GET')
+
+    if (reponse.status != 200):
+        #Erreur code postale non valide à traiter
+        print("Code postal non valide")
+    else:
+        data_json= json.loads(data)
+        code_insee = data_json['results'][0]['insee']
+
+    headers = {'Authorization' : 'Bearer '+ token, 'Accept' : 'application/json'}
+
+    url ="https://api.francetravail.io/partenaire/offresdemploi/v2/offres/search?commune="+ str(code_insee)
+
+    reponse, data= httplib2.Http().request(url, method='GET', headers=headers)
+
+    return data
+        
+    
+
+    
+    

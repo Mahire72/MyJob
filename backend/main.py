@@ -2,18 +2,19 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 import httplib2
 import json
-from src.fichier import *
+from src import requete_api
 
  
 app = FastAPI()
 
-token = get_token()
+token = requete_api.get_token()
 
 
 @app.get("/")
 async def root():
-    if not token:
+    if requete_api.toujours_valide(token) == False{
         token = get_token()
+    }
         
     return {"message": "Hello World"}
 

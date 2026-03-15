@@ -1,0 +1,62 @@
+#results{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap:20px;
+    padding:20px;
+}
+
+.job-card{
+    background:white;
+    padding:20px;
+    margin:20px auto;
+    width:60%;
+    border-radius:10px;
+    box-shadow:0 3px 10px rgba(0,0,0,0.1);
+}
+
+.topnav{
+    background:#222;
+    overflow:hidden;
+    display:flex;
+    align-items:center;
+}
+
+.topnav a{
+    color:white;
+    padding:14px 20px;
+    text-decoration:none;
+}
+
+.logo{
+    font-weight:bold;
+    font-size:18px;
+}
+
+.topnav a:hover{
+    background:#007BFF;
+}
+
+.topnav .icon{
+    display:none;
+    margin-left:auto;
+}
+
+@media screen and (max-width:600px){
+
+    .topnav a:not(:first-child){
+        display:none;
+    }
+
+    .topnav a.icon{
+        display:block;
+    }
+
+    .topnav.responsive{
+        flex-direction:column;
+    }
+
+    .topnav.responsive a{
+        display:block;
+    }
+
+}

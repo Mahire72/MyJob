@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>MyJob</title>
+
+    <link rel="stylesheet" href="stylesheet.css">
+    <script src="topnav.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+</head>
+
+<body>
+
+<!-- Navigation -->
+
+<div class="topnav" id="Topnav">
+    <a href="#home" class="logo">Myjob</a>
+    <a href="#app">App</a>
+    <a href="#contact">Contacter</a>
+    <a href="#info">Info</a>
+    <a href="javascript:void(0);" class="icon" onclick="topNav()">
+        <i class="fa fa-bars"></i>
+    </a>
+</div>
+
+<!-- Title -->
+
+<div>
+    <h1 class="titre">MyJob</h1>
+</div>
+
+<!-- Search section -->
+
+<div class="search-box">
+    <input id="keyword" placeholder="Métier...">
+    <select id="city">
+        <option value="">Toutes les villes</option>
+        <option value="Paris">Paris</option>
+        <option value="Lyon">Lyon</option>
+        <option value="Marseille">Marseille</option>
+        <option value="Lille">Lille</option>
+        <option value="Grenoble">Grenoble</option>
+        <option value="Bordeaux">Bordeaux</option>
+        <option value="Toulouse">Toulouse</option>
+        <option value="Nice">Nice</option>
+        <option value="Strasbourg">Strasbourg</option>
+        <option value="Rennes">Rennes</option>
+    </select>
+    </select>
+    <button class="button" onclick="searchJobs()">Rechercher</button>
+</div>
+
+<!-- Job results -->
+
+<div id="results"></div>
+
+<!-- JavaScript -->
+
+<script>
+async function searchJobs() {
+    const keyword = document.getElementById("keyword").value;
+    const city = document.getElementById("city").value;
+    const response = await fetch(
+        `http://localhost:8000/jobs?keyword=${keyword}&city=${city}`
+    );
+    const data = await response.json();
+    const results = document.getElementById("results");
+    results.innerHTML = "";
+    if (data.resultats) {
+        data.resultats.forEach(job => {
+            results.innerHTML += `
+            <div class="job-card">
+                <h3>${job.intitule}</h3>
+                <p><b>Entreprise:</b> ${job.entreprise.nom}</p>
+                <p><b>Lieu:</b> ${job.lieuTravail.libelle}</p>
+                <a href="detail.html?id=${job.id}">Voir détail</a>
+            </div>
+            `;
+        });
+    }
+}
+
+</script>
+</body>
+</html>

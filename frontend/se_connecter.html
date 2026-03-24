@@ -1,14 +1,91 @@
 <!DOCTYPE html>
+<html lang="fr">
 <head>
+    <meta charset="UTF-8">
+    <title>Se connecter</title>
+
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center; 
+            align-items: center;
+            background-color: #f2f0f5;
+            font-family: Arial, sans-serif;
+        }
+
+        .login-box {
+            background: peachpuff;
+            padding: 30px;
+            border-radius: 10px;
+            width: 300px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        a {
+            display: block;
+            margin-top: 10px;
+            text-decoration: none;
+            color: #007BFF;
+        }
+    </style>
 </head>
+
 <body>
-    <h1>Se Connecter</h1>
-    <div>
-        <input type="text" placeholder="Entrez votre adresse mail"/>
-        <input type="text" placeholder="Entrez votre mot de passe"/>
-        <button id="login" onclick="login()">Login</button>
-    </div>
-    <div>   
-        <a href="creer_compte.html">Vous n'avez pas de compte?</a>
-    </div>
+
+<div class="login-box">
+    <h2>Se Connecter</h2>
+
+    <input id="email" type="text" placeholder="Entrez votre adresse mail"/>
+    <input id="password" type="password" placeholder="Entrez votre mot de passe"/>
+
+    <button onclick="login()">Login</button>
+
+    <a href="creer_compte.html">Vous n'avez pas de compte?</a>
+</div>
+
+<script>
+    function login() {
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+
+        // pour obtenir les saved data
+        const savedEmail = localStorage.getItem("email");
+        const savedPassword = localStorage.getItem("password");
+
+        if (email === savedEmail && password === savedPassword)
+        {
+            alert("Connexion reussie !");
+        }
+        else {
+            alert("Email ou mot de passe incorrect !");
+        }
+    }
+</script>
+
 </body>
+</html>

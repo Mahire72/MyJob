@@ -1,1 +1,5 @@
-projet 1 
+fastapi
+uvicorn[standard]
+httplib2
+pydantic
+certifi

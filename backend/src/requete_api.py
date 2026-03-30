@@ -1,35 +1,73 @@
 import httplib2
 import json
-from io import BytesIO
+import os
+
+import certifi
+from dotenv import load_dotenv
 
 
-ACCESS_POINT = 'https://entreprise.francetravail.fr/connexion/oauth2/access_token?realm=%2Fpartenaire'
-Recherche_API = 'https://api.francetravail.io/partenaire/offresdemploi/v2/offres/search'
+ACCESS_POINT = "https://entreprise.francetravail.fr/connexion/oauth2/access_token?realm=%2Fpartenaire"
+Recherche_API = "https://api.francetravail.io/partenaire/offresdemploi/v2/offres/search"
 
-client_id = "PAR_futurejob_f111ac9cc68d1d5b397eb74df49e7eaf3c647c94228310f2dae8c33d63156b1d"
-client_secret = "4fc6f68794bdacef02570a6176625b9de3ce931f2f67081cc7fabd7cb09b8f25"
-scope = "api_offresdemploiv2 o2dsoffre"
+# Charger les variables d'environnement
+load_dotenv()
+
+client_id = os.getenv("FRANCE_TRAVAIL_CLIENT_ID")
+client_secret = os.getenv("FRANCE_TRAVAIL_CLIENT_SECRET")
+scope = os.getenv("FRANCE_TRAVAIL_SCOPE", "api_offresdemploiv2 o2dsoffre")
+
+# Vérifier si la validation du certificat SSL est désactivée
+# Si oui, on désactive la validation du certificat SSL
+#cela du à un problème de certificat SSL avec la librairie httplib2
+_disable_ssl_validation = os.getenv("DISABLE_SSL_CERT_VALIDATION", "false").strip().lower() in {
+    "1",
+    "true",
+    "yes",
+    "y",
+    "on",
+}
+
+# Fonction pour créer une instance de la classe Http de la librairie httplib2
+def _http() -> httplib2.Http:
+    if _disable_ssl_validation:
+        return httplib2.Http(disable_ssl_certificate_validation=True)
+    return httplib2.Http(ca_certs=certifi.where())
+
+# Fonction pour vérifier si les variables d'environnement sont présentes
+def _require_secrets() -> None:
+    if not client_id or not client_secret:
+        raise RuntimeError(
+            "Faltan FRANCE_TRAVAIL_CLIENT_ID / FRANCE_TRAVAIL_CLIENT_SECRET en el entorno (.env)."
+        )
+
 
 def get_token():
-    header = {'Content-Type' : 'application/x-www-form-urlencoded'}
+    _require_secrets()
+    header = {"Content-Type": "application/x-www-form-urlencoded"}
     body = (
-        "grant_type=client_credentials" +
-        "&client_id=" + client_id + 
-        "&client_secret="+client_secret + 
-        "&scope=" +scope
+        "grant_type=client_credentials"
+        + "&client_id="
+        + client_id
+        + "&client_secret="
+        + client_secret
+        + "&scope="
+        + scope
     )
-    reponse,data = httplib2.Http().request(ACCESS_POINT, method='POST', headers=header, body=body)
+    reponse, data = _http().request(
+        ACCESS_POINT, method="POST", headers=header, body=body
+    )
 
     p = json.loads(data.decode())
     return p["access_token"]
-   
+
+
 def toujours_valide(token):
-    headers = {'Authorization' : 'Bearer '+ token, 'Accept' : 'application/json'}
-    
+    headers = {"Authorization": "Bearer " + token, "Accept": "application/json"}
+
     url = "https://api.francetravail.io/partenaire/offresdemploi/v2/offres/search?motsCles=developpeur"
 
-    reponse,data = httplib2.Http().request(url ,method='GET', headers=headers)
-    
+    reponse, data = _http().request(url, method="GET", headers=headers)
+
     return reponse.status != 400
 
 
@@ -37,25 +75,38 @@ def jobs_ville(code_postal, token):
     # On a besoin du code INSEE pour faire la requete France Travail
     #Pour faire cela on se sert d'une nouvelle API de opendatasoft (base de donnees des communes)
 
-    url = "https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/correspondance-code-cedex-code-insee/records/?limit=10&offset=0&where=code+%3D+" + str(code_postal)
-    reponse, data= httplib2.Http().request(url, method='GET')
+    url = (
+        "https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/"
+        "correspondance-code-cedex-code-insee/records/?limit=10&offset=0&where=code+%3D+"
+        + str(code_postal)
+    )
+    reponse, data = _http().request(url, method="GET")
 
-    if (reponse.status != 200):
+    if not (200 <= reponse.status < 300):
         #Erreur code postale non valide à traiter
-        print("Code postal non valide")
-    else:
-        data_json= json.loads(data)
-        code_insee = data_json['results'][0]['insee']
+        return {"error": "Code postal invalide ou API indisponible", "status": reponse.status}
 
-    headers = {'Authorization' : 'Bearer '+ token, 'Accept' : 'application/json'}
+    data_json = json.loads(data.decode())
+    if "results" not in data_json or len(data_json["results"]) == 0:
+        return {"error": "Aucun code INSEE trouvé pour ce code postal"}
 
-    url ="https://api.francetravail.io/partenaire/offresdemploi/v2/offres/search?commune="+ str(code_insee)
+    code_insee = data_json["results"][0]["insee"]
+    headers = {
+        "Authorization": "Bearer " + token,
+        "Accept": "application/json",
+    }
+    url = (
+        "https://api.francetravail.io/partenaire/offresdemploi/v2/offres/search?commune="
+        + str(code_insee)
+    )
 
-    reponse, data= httplib2.Http().request(url, method='GET', headers=headers)
+    reponse, data = _http().request(url, method="GET", headers=headers)
+    if not (200 <= reponse.status < 300):
+        return {"error": "Erreur lors de la récupération des offres", "status": reponse.status}
 
-    return data
-        
+    return json.loads(data.decode())
+
+
+if __name__ == "__main__":
     
-
-    
-    
+    print(jobs_ville("75001", get_token()))

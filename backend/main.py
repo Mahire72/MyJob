@@ -46,6 +46,9 @@ async def jobs(code_postal: str = Query(...)):
     token = _get_valid_token()
     data = requete_api.jobs_ville(code_postal, token)
 
-    return data
+    normalised = requete_api.normaliser_offres(data)
+    if isinstance(normalised, dict) and isinstance(normalised.get("offres"), list):
+        normalised["offres"] = normalised["offres"][:10]
+    return normalised
 
 

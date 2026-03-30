@@ -104,7 +104,9 @@ def jobs_ville(code_postal, token):
         #Erreur code postale non valide à traiter
         return {"error": "Code postal invalide ou API indisponible", "status": reponse.status}
 
-    data_json = json.loads(data.decode())
+    data_json = json.loads(data.decode()
+    )
+    # Vérifier si le code INSEE est présent dans les résultats
     if "results" not in data_json or len(data_json["results"]) == 0:
         return {"error": "Aucun code INSEE trouvé pour ce code postal"}
 
@@ -123,6 +125,73 @@ def jobs_ville(code_postal, token):
         return {"error": "Erreur lors de la récupération des offres", "status": reponse.status}
 
     return json.loads(data.decode())
+
+
+def normaliser_offres(data_json):
+    """
+    Normalise la réponse France Travail en un format plus simple et stable.
+    Ne lève pas d'exception si la structure varie : renvoie des champs à None.
+    """
+    if not isinstance(data_json, dict):
+        return {"offres": [], "total": 0}
+
+    # Propager les erreurs de jobs_ville telles quelles
+    if "error" in data_json:
+        return data_json
+
+    offres_raw = None
+    for key in ("resultats", "results", "offres", "items"):
+        if isinstance(data_json.get(key), list):
+            offres_raw = data_json[key]
+            break
+
+    if offres_raw is None:
+        offres_raw = []
+
+    def _get(d, *path):
+        cur = d
+        for p in path:
+            if not isinstance(cur, dict) or p not in cur:
+                return None
+            cur = cur[p]
+        return cur
+
+    offres = []
+    for o in offres_raw:
+        if not isinstance(o, dict):
+            continue
+        offres.append(
+            {
+                "id": o.get("id"),
+                "titre": o.get("intitule") or o.get("title"),
+                "description": o.get("description"),
+                "entreprise": _get(o, "entreprise", "nom") or _get(o, "company", "name"),
+                "lieu": _get(o, "lieuTravail", "libelle")
+                or _get(o, "lieuTravail", "commune")
+                or _get(o, "location", "label"),
+                "code_postal": _get(o, "lieuTravail", "codePostal") or _get(o, "location", "postalCode"),
+                "type_contrat": o.get("typeContrat") or o.get("contractType"),
+                "nature_contrat": o.get("natureContrat"),
+                "salaire": _get(o, "salaire", "libelle") or _get(o, "salary", "label"),
+                "date_creation": o.get("dateCreation") or o.get("createdAt"),
+                "date_actualisation": o.get("dateActualisation") or o.get("updatedAt"),
+                "url": _get(o, "origineOffre", "urlOrigine") or _get(o, "applyUrl") or _get(o, "url"),
+            }
+        )
+
+    total = (
+        data_json.get("nombreResultats")
+        or data_json.get("total")
+        or data_json.get("count")
+        or len(offres_raw)
+    )
+
+    return {"offres": offres, "total": total}
+
+
+
+
+
 
 
 if __name__ == "__main__":

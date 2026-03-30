@@ -42,9 +42,22 @@ async def root():
     return {"message": "API emploi active"}
 
 @app.get("/jobs")
-async def jobs(code_postal: str = Query(...)):
+async def jobs(
+    code_postal: str = Query(...),
+    mots_cles: str | None = Query(None),
+    type_contrat: str | None = Query(None),
+    distance_max: int | None = Query(None),
+    salaire_min: int | None = Query(None),
+):
     token = _get_valid_token()
-    data = requete_api.jobs_ville(code_postal, token)
+    data = requete_api.jobs_ville(
+        code_postal,
+        token,
+        mots_cles=mots_cles,
+        type_contrat=type_contrat,
+        distance_max=distance_max,
+        salaire_min=salaire_min,
+    )
 
     normalised = requete_api.normaliser_offres(data)
     if isinstance(normalised, dict) and isinstance(normalised.get("offres"), list):

@@ -1,6 +1,7 @@
 import httplib2
 import json
 import os
+from urllib.parse import urlencode
 
 import certifi
 from dotenv import load_dotenv
@@ -27,7 +28,7 @@ _disable_ssl_validation = os.getenv("DISABLE_SSL_CERT_VALIDATION", "false").stri
     "on",
 }
 
-# Fonction pour créer une instance de la classe Http de la librairie httplib2
+# Fonction pour créer une instance de la classe Http de la librairie httplib2 
 def _http() -> httplib2.Http:
     if _disable_ssl_validation:
         return httplib2.Http(disable_ssl_certificate_validation=True)
@@ -71,7 +72,14 @@ def toujours_valide(token):
     return reponse.status != 400
 
 
-def jobs_ville(code_postal, token):
+def jobs_ville(
+    code_postal,
+    token,
+    mots_cles=None,
+    type_contrat=None,
+    distance_max=None,
+    salaire_min=None,
+):
     # On a besoin du code INSEE pour faire la requete France Travail
     #Pour faire cela on se sert d'une nouvelle API de opendatasoft (base de donnees des communes)
 
@@ -97,9 +105,24 @@ def jobs_ville(code_postal, token):
         "Authorization": "Bearer " + token,
         "Accept": "application/json",
     }
-    url = (
-        "https://api.francetravail.io/partenaire/offresdemploi/v2/offres/search?commune="
-        + str(code_insee)
+    params = {"commune": str(code_insee)}
+    if mots_cles:
+        params["motsCles"] = str(mots_cles)
+    if type_contrat:
+        params["typeContrat"] = str(type_contrat)
+    if distance_max is not None:
+        params["distanceMax"] = str(distance_max)
+
+    #Attention, salaire_min ne fonctionne pas, l'api retourne un STRING avec un format different de celui attendu
+    #Il faut donc depurer le string pour obtenir le salaire min en int
+    #Exemple de string retourne par l'api : "Mensuel de 1823.03 Euros à 2500.0 Euros sur 12.0 mois"
+    #On doit utiliser une expression reguliere pour extraire le salaire min
+    #A faire plus tard
+    if salaire_min is not None:
+        params["salaireMin"] = str(salaire_min)
+
+    url = "https://api.francetravail.io/partenaire/offresdemploi/v2/offres/search?" + urlencode(
+        params, doseq=True
     )
 
     reponse, data = _http().request(url, method="GET", headers=headers)

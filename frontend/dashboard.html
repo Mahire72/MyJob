@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>My Dream Job Dashboard</title>
+
+<!-- Leaflet -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial;
+    background: #f4f6f9;
+}
+
+.header {
+    text-align: center;
+    padding: 20px;
+}
+
+.search-box {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+input {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+button {
+    padding: 10px;
+    background: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+.main {
+    display: flex;
+    height: 80vh;
+}
+
+.results {
+    width: 40%;
+    overflow-y: scroll;
+    padding: 10px;
+}
+
+.card {
+    background: white;
+    padding: 15px;
+    margin: 10px;
+    border-radius: 8px;
+}
+
+#map {
+    width: 60%;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+    <h1>My Dream Job Dashboard</h1>
+
+    <div class="search-box">
+        <input id="keyword" placeholder="Métier">
+        <input id="location" placeholder="Ville">
+        <button onclick="searchJobs()">Rechercher</button>
+    </div>
+</div>
+
+<div class="main">
+    <div id="results" class="results"></div>
+    <div id="map"></div>
+</div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<script>
+var map = L.map('map').setView([46.6, 2.5], 6);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap'
+}).addTo(map);
+
+function searchJobs() {
+
+    const resultsDiv = document.getElementById("results");
+
+    resultsDiv.innerHTML = "";
+    map.eachLayer(layer => {
+        if (layer instanceof L.Marker) map.removeLayer(layer);
+    });
+
+    //pour l'insatnt 
+    const jobs = [
+        { title: "Développeur", city: "Paris", lat: 48.8566, lon: 2.3522 },
+        { title: "Data Analyst", city: "Lyon", lat: 45.7640, lon: 4.8357 },
+        { title: "Designer", city: "Marseille", lat: 43.2965, lon: 5.3698 }
+    ];
+
+    jobs.forEach(job => {
+        resultsDiv.innerHTML += `
+            <div class="card">
+                💼 ${job.title}<br>
+                📍 ${job.city}
+            </div>
+        `;
+        L.marker([job.lat, job.lon])
+            .addTo(map)
+            .bindPopup(`${job.title} - ${job.city}`);
+    });
+}
+</script>
+</body>
+</html>

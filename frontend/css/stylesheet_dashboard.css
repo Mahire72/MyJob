@@ -1,0 +1,53 @@
+body {
+    margin: 0;
+    font-family: Arial;
+    background: #f4f6f9;
+}
+
+.header {
+    text-align: center;
+    padding: 20px;
+}
+
+.search-box {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+input {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+button {
+    padding: 10px;
+    background: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+.main {
+    display: flex;
+    height: 80vh;
+}
+
+.results {
+    width: 40%;
+    overflow-y: scroll;
+    padding: 10px;
+}
+
+.card {
+    background: white;
+    padding: 15px;
+    margin: 10px;
+    border-radius: 8px;
+}
+
+#map {
+    width: 60%;
+}

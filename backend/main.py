@@ -4,6 +4,20 @@ from dotenv import load_dotenv
 
 from backend.src import requete_api
 
+"""
+Ce fichier est le fichier principal de l'application.
+Il contient la fonction principale qui permet de lancer l'application.
+Il contient également les routes pour les différentes fonctionnalités de l'application.
+
+Les routes sont :
+- / : la route principale qui renvoie un message de bienvenue
+- /jobs : la route pour rechercher les offres d'emploi pour une ville donnée
+
+Les fonctionnalités sont :
+- Rechercher les offres d'emploi pour une ville donnée
+- Afficher les offres d'emploi pour une ville donnée
+"""
+
 # Charger les variables d'environnement
 load_dotenv()
 app = FastAPI()

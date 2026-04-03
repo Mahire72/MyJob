@@ -1,9 +1,26 @@
 import httplib2
 import json
 import os
-
 import certifi
 from dotenv import load_dotenv
+
+'''
+Ce fichier contient les fonctions pour faire les requêtes à l'API de France Travail
+_
+- get_token() : pour obtenir un token d'accès
+- toujours_valide() : pour vérifier si le token est toujours valide
+- jobs_ville() : pour rechercher les offres d'emploi pour une ville donnée
+
+Les variables d'environnement sont :
+- FRANCE_TRAVAIL_CLIENT_ID : l'ID du client
+- FRANCE_TRAVAIL_CLIENT_SECRET : le secret du client
+- FRANCE_TRAVAIL_SCOPE : le scope de l'accès
+- DISABLE_SSL_CERT_VALIDATION : pour désactiver la validation du certificat SSL
+
+- _http() : pour créer une instance de la classe Http de la librairie httplib2
+- _require_secrets() : pour vérifier si les variables d'environnement sont présentes
+
+'''
 
 
 ACCESS_POINT = "https://entreprise.francetravail.fr/connexion/oauth2/access_token?realm=%2Fpartenaire"
@@ -28,6 +45,7 @@ _disable_ssl_validation = os.getenv("DISABLE_SSL_CERT_VALIDATION", "false").stri
 }
 
 # Fonction pour créer une instance de la classe Http de la librairie httplib2
+#Je l'ai rajoutéé car problème ssl avec la librairie httplib2
 def _http() -> httplib2.Http:
     if _disable_ssl_validation:
         return httplib2.Http(disable_ssl_certificate_validation=True)
@@ -37,7 +55,7 @@ def _http() -> httplib2.Http:
 def _require_secrets() -> None:
     if not client_id or not client_secret:
         raise RuntimeError(
-            "Faltan FRANCE_TRAVAIL_CLIENT_ID / FRANCE_TRAVAIL_CLIENT_SECRET en el entorno (.env)."
+            "Il manque les variables d'environnement"
         )
 
 

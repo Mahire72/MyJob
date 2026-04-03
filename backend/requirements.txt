@@ -1,0 +1,5 @@
+fastapi
+uvicorn[standard]
+httplib2
+pydantic
+certifi

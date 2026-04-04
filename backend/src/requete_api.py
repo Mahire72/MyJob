@@ -4,6 +4,7 @@ import os
 from urllib.parse import urlencode
 
 import certifi
+from .utils import extraire_salaire
 from dotenv import load_dotenv
 
 '''
@@ -136,7 +137,8 @@ def jobs_ville(
     #Il faut donc depurer le string pour obtenir le salaire min en int
     #Exemple de string retourne par l'api : "Mensuel de 1823.03 Euros à 2500.0 Euros sur 12.0 mois"
     #On doit utiliser une expression reguliere pour extraire le salaire min
-    #A faire plus tard
+    #A faire plus tard - resolu utiliser la fonction extraire_salaire de utils.py
+    #le filtrage sera fait côté backend après normalisation
     if salaire_min is not None:
         params["salaireMin"] = str(salaire_min)
 
@@ -148,7 +150,38 @@ def jobs_ville(
     if not (200 <= reponse.status < 300):
         return {"error": "Erreur lors de la récupération des offres", "status": reponse.status}
 
-    return json.loads(data.decode())
+
+    #on charge les données en json
+    results = json.loads(data.decode())
+    offres = results.get("resultats", [])
+
+
+    #Filtrer les offres si le salaire min est fourni -> on utilise la fonction extraire_salaire de utils.py
+
+    if salaire_min is None:
+        return results
+
+    offres_filtrees = []
+    seuil = float(salaire_min)
+    for offre in offres:
+        salaire_obj = offre.get("salaire") or {}
+        if not isinstance(salaire_obj, dict):
+            salaire_obj = {}
+        #on extrait le libelle du salaire
+        salaire_libelle = salaire_obj.get("libelle", "") or ""
+        salaire_offre = extraire_salaire(salaire_libelle)
+        if salaire_offre is not None and salaire_offre >= seuil:
+            offres_filtrees.append(offre)
+
+    results["resultats"] = offres_filtrees
+    return results
+
+
+
+
+
+
+
 
 
 def normaliser_offres(data_json):

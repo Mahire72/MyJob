@@ -2,7 +2,7 @@ from fastapi import FastAPI, Query
 # Importer la librairie dotenv pour charger les variables d'environnement
 from dotenv import load_dotenv
 
-from backend.src import requete_api
+from src import requete_api
 
 """
 Ce fichier est le fichier principal de l'application.

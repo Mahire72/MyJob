@@ -1,75 +1,19 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<title>Créer un compte</title>
-
-<style>
-    body {
-        margin: 0;
-        height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background-color: #f0f2f5;
-        font-family: Arial;
-    }
-
-    .box {
-        background: white;
-        padding: 30px;
-        border-radius: 10px;
-        width: 300px;
-        text-align: center;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
-
-    input {
-        width: 100%;
-        padding: 10px;
-        margin: 10px 0;
-    }
-
-    button {
-        width: 100%;
-        padding: 10px;
-        background: blue;
-        color: white;
-        border: none;
-    }
-</style>
-
+     <meta charset="UTF-8">
+    <link rel = "stylesheet" href="css/stylesheet_creer_compte.css"> 
+    <script src="js/topnav.js" defer></script>
+    <title>Créer un compte</title>
 </head>
 
 <body>
-
-<div class="box">
-    <h1>Créer un compte</h1>
-
-    <input id="nom" type="text" placeholder="Nom">
-    <input id="email" type="text" placeholder="Email">
-    <input id="password" type="password" placeholder="Mot de passe">
-
-    <button onclick="register()">S'inscrire</button>
-</div>
-
-<script>
-function register() {
-    const nom = document.getElementById("nom").value;
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
-
-    if (nom === "" || email === "" || password === "") {
-        alert("Tous les champs sont obligatoires !");
-    } else {
-        localStorage.setItem("email", email);
-        localStorage.setItem("password", password);
-        
-        alert("Compte créé !");
-        window.location.href = "se_connecter.html";
-    }
-}
-</script>
-
+    <div class="box">
+        <h1>Créer un compte</h1>
+        <input id="nom" type="text" placeholder="Nom">
+        <input id="email" type="text" placeholder="Email">
+        <input id="password" type="password" placeholder="Mot de passe">
+        <button onclick="register()">S'inscrire</button>
+    </div>
 </body>
 </html>

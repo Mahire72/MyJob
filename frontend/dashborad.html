@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+
+    <!-- CSS-->
+    <link rel="stylesheet" href="css/stylesheet_dashboard.css">
+
+    <!-- Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+</head>
+
+<body>
+    <div class="header">
+        <h1>My Jobs</h1>
+
+        <!-- profile bouton-->
+        <button onclick="goToProfile()">Profile</button>
+    </div>
+
+    <div class="container">
+        <div class="sidebar">
+            <h3>Liste de jobs</h3>
+            <div id="jobList"></div>
+        </div>
+
+        <!-- map-->
+         <div class="content">
+            <div id="map"></div>
+         </div>
+    </div>
+
+        <!-- leaflet JS-->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <script>
+    var map = L.map('map').setView([46.6, 2.5], 6);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap'
+    }).addTo(map);
+    </script>
+    <script src="js/dashboard.js"></script>
+</body>
+
+</html>

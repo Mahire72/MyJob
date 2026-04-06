@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 
 from src import requete_api
 from src.models import UserProfile
-
+from src import db
 """
 Ce fichier est le fichier principal de l'application.
 Il contient la fonction principale qui permet de lancer l'application.
@@ -19,21 +19,24 @@ Les fonctionnalités sont :
 - Afficher les offres d'emploi pour une ville donnée
 """
 
-# Store en mémoire (profil unique "default")
-PROFILE_STORE: dict[str, dict] = {}
-
-# Exemple de profil utilisateur
-PROFILE_STORE["default"] = {
-    "mots_cles": "developpeur python",
-    "type_contrat": "CDI",
-    "code_postal": "75013",
-    "distance_max": 20,
-    "salaire_min": 2000
-}
-
 # Charger les variables d'environnement
 load_dotenv()
 app = FastAPI()
+#On initialise la base de données
+db.init_db()
+
+# Exemple de profil utilisateur (créé si absent)
+if db.get_profile("default") is None:
+    db.upsert_profile(
+        "default",
+        {
+            "mots_cles": "developpeur python",
+            "type_contrat": "CDI",
+            "code_postal": "75013",
+            "distance_max": 20,
+            "salaire_min": 2000,
+        },
+    )
 
 _token: str | None = None
 
@@ -79,16 +82,16 @@ async def jobs(
 
 
 @app.post("/profile")
-async def create_or_update_profile(profile: UserProfile):
-    PROFILE_STORE["default"] = profile.model_dump()
+async def create_or_update_profile(profile: UserProfile, profile_id: str = Query("default")):
+    stored = db.upsert_profile(profile_id, profile.model_dump())
     return {
         "message": "Profil créé ou mis à jour avec succès",
-        "profile": PROFILE_STORE["default"]
+        "profile": stored,
     }
 
 @app.get("/profile")
-async def get_profile():
-    profile = PROFILE_STORE.get("default")
+async def get_profile(profile_id: str = Query("default")):
+    profile = db.get_profile(profile_id)
     if profile is None:
         return {
             "message": "Aucun profil trouvé",
@@ -96,13 +99,15 @@ async def get_profile():
         }
     return {
         "message": "Profil récupéré avec succès",
-        "profile": PROFILE_STORE["default"]
+        "profile": profile,
     }
 
 
 @app.get("/jobs/recommended")
-async def recommended_jobs():
-    profile = PROFILE_STORE.get("default")
+#Fonction pour récupérer les offres recommandées pour un profil donné
+#/jobs/recommended?profile_id=default
+async def recommended_jobs(profile_id: str = Query("default")):
+    profile = db.get_profile(profile_id)
     if profile is None:
         return {
             "message": "Aucun profil trouvé",

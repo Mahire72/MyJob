@@ -3,6 +3,7 @@ from fastapi import FastAPI, Query
 from dotenv import load_dotenv
 
 from src import requete_api
+from src.models import UserProfile
 
 """
 Ce fichier est le fichier principal de l'application.
@@ -17,6 +18,18 @@ Les fonctionnalités sont :
 - Rechercher les offres d'emploi pour une ville donnée
 - Afficher les offres d'emploi pour une ville donnée
 """
+
+# Store en mémoire (profil unique "default")
+PROFILE_STORE: dict[str, dict] = {}
+
+# Exemple de profil utilisateur
+PROFILE_STORE["default"] = {
+    "mots_cles": "developpeur python",
+    "type_contrat": "CDI",
+    "code_postal": "75013",
+    "distance_max": 20,
+    "salaire_min": 2000
+}
 
 # Charger les variables d'environnement
 load_dotenv()
@@ -65,3 +78,49 @@ async def jobs(
     return normalised
 
 
+@app.post("/profile")
+async def create_or_update_profile(profile: UserProfile):
+    PROFILE_STORE["default"] = profile.model_dump()
+    return {
+        "message": "Profil créé ou mis à jour avec succès",
+        "profile": PROFILE_STORE["default"]
+    }
+
+@app.get("/profile")
+async def get_profile():
+    profile = PROFILE_STORE.get("default")
+    if profile is None:
+        return {
+            "message": "Aucun profil trouvé",
+            "profile": None
+        }
+    return {
+        "message": "Profil récupéré avec succès",
+        "profile": PROFILE_STORE["default"]
+    }
+
+
+@app.get("/jobs/recommended")
+async def recommended_jobs():
+    profile = PROFILE_STORE.get("default")
+    if profile is None:
+        return {
+            "message": "Aucun profil trouvé",
+            "jobs": []
+        }
+    token = _get_valid_token()
+
+    data = requete_api.jobs_ville(
+        code_postal=profile["code_postal"],
+        token=token,
+        mots_cles=profile["mots_cles"],
+        type_contrat=profile["type_contrat"],
+        distance_max=profile["distance_max"],
+        salaire_min=profile["salaire_min"],
+    )
+
+    #ON oublie pas de normaliser les offres et limiter le nombre d'offres à 10 (a modifier plus tard)
+    normalised = requete_api.normaliser_offres(data)
+    if isinstance(normalised, dict) and isinstance(normalised.get("offres"), list):
+        normalised["offres"] = normalised["offres"][:10]
+    return normalised

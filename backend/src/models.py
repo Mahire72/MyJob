@@ -1,7 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional
 
-
 """
 Modèle de profil utilisateur
 """
@@ -13,6 +12,16 @@ class UserProfile(BaseModel):
     code_postal: str
     distance_max: Optional[int] = None
     salaire_min: Optional[int] = None
+
+
+class UserRegister(BaseModel):
+    email: str
+    password: str
+
+
+class UserLogin(BaseModel):
+    email: str
+    password: str
 
 
 

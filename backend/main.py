@@ -1,10 +1,8 @@
 from fastapi import FastAPI, Query
-# Importer la librairie dotenv pour charger les variables d'environnement
 from dotenv import load_dotenv
 
-from src import requete_api
-from src.models import UserProfile
-from src import db
+from src import db, requete_api
+from src.models import UserLogin, UserProfile, UserRegister
 """
 Ce fichier est le fichier principal de l'application.
 Il contient la fonction principale qui permet de lancer l'application.
@@ -13,10 +11,20 @@ Il contient également les routes pour les différentes fonctionnalités de l'ap
 Les routes sont :
 - / : la route principale qui renvoie un message de bienvenue
 - /jobs : la route pour rechercher les offres d'emploi pour une ville donnée
+- /profile : la route pour créer ou mettre à jour un profil utilisateur
+- /profile : la route pour récupérer un profil utilisateur
+- /jobs/recommended : la route pour récupérer les offres recommandées pour un profil utilisateur
+- /registers : la route pour créer un utilisateur
+- /login : la route pour se connecter à l'application
 
 Les fonctionnalités sont :
 - Rechercher les offres d'emploi pour une ville donnée
 - Afficher les offres d'emploi pour une ville donnée
+- Créer ou mettre à jour un profil utilisateur
+- Récupérer un profil utilisateur
+- Récupérer les offres recommandées pour un profil utilisateur
+- Créer un utilisateur
+- Se connecter à l'application
 """
 
 # Charger les variables d'environnement
@@ -25,18 +33,6 @@ app = FastAPI()
 #On initialise la base de données
 db.init_db()
 
-# Exemple de profil utilisateur (créé si absent)
-if db.get_profile("default") is None:
-    db.upsert_profile(
-        "default",
-        {
-            "mots_cles": "developpeur python",
-            "type_contrat": "CDI",
-            "code_postal": "75013",
-            "distance_max": 20,
-            "salaire_min": 2000,
-        },
-    )
 
 _token: str | None = None
 
@@ -82,16 +78,19 @@ async def jobs(
 
 
 @app.post("/profile")
-async def create_or_update_profile(profile: UserProfile, profile_id: str = Query("default")):
-    stored = db.upsert_profile(profile_id, profile.model_dump())
+async def create_or_update_profile(
+    profile: UserProfile,
+    user_id: str = Query(...),
+):
+    stored = db.upsert_profile(user_id, profile.model_dump())
     return {
         "message": "Profil créé ou mis à jour avec succès",
         "profile": stored,
     }
 
 @app.get("/profile")
-async def get_profile(profile_id: str = Query("default")):
-    profile = db.get_profile(profile_id)
+async def get_profile(user_id: str = Query(...)):
+    profile = db.get_profile(user_id)
     if profile is None:
         return {
             "message": "Aucun profil trouvé",
@@ -106,8 +105,8 @@ async def get_profile(profile_id: str = Query("default")):
 @app.get("/jobs/recommended")
 #Fonction pour récupérer les offres recommandées pour un profil donné
 #/jobs/recommended?profile_id=default
-async def recommended_jobs(profile_id: str = Query("default")):
-    profile = db.get_profile(profile_id)
+async def recommended_jobs(user_id: str = Query(...)):
+    profile = db.get_profile(user_id)
     if profile is None:
         return {
             "message": "Aucun profil trouvé",
@@ -129,3 +128,17 @@ async def recommended_jobs(profile_id: str = Query("default")):
     if isinstance(normalised, dict) and isinstance(normalised.get("offres"), list):
         normalised["offres"] = normalised["offres"][:10]
     return normalised
+
+
+@app.post("/registers")
+async def registers(payload: UserRegister):
+    user = db.create_user(payload.email, payload.password)
+    return {"message": "Utilisateur créé avec succès", "user": user}
+
+
+@app.post("/login")
+async def login(payload: UserLogin):
+    user = db.verify_user(payload.email, payload.password)
+    if user is None:
+        return {"message": "Identifiants invalides", "user": None}
+    return {"message": "Connexion réussie", "user": user}

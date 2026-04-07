@@ -68,13 +68,17 @@ def create_user(email: str, password: str) -> dict:
     pwd_hash = _hash_password(password, salt)
 
     with _connect() as conn:
-        conn.execute(
-            """
-            INSERT INTO users (id, email, password_salt, password_hash, created_at)
-            VALUES (?, ?, ?, ?, ?)
-            """,
-            (user_id, email, salt, pwd_hash, now),
-        )
+        try:
+            conn.execute(
+                """
+                INSERT INTO users (id, email, password_salt, password_hash, created_at)
+                VALUES (?, ?, ?, ?, ?)
+                """,
+                (user_id, email, salt, pwd_hash, now),
+            )
+        except sqlite3.IntegrityError as e:
+            # Email déjà existant (UNIQUE)
+            raise ValueError("Email déjà utilisé") from e
 
     return {"id": user_id, "email": email, "created_at": now}
 

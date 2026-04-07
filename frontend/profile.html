@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Modifiez votre Profile</title>
+
+    <!--CSS-->
+    <link rel="stylesheet" href="css/profile.css">
+
+    <!--js-->
+    <script src="js/profile.js" defer></script>
+
+</head>
+<body>
+    <div class="navbar">
+        <h1>Mon Profile</h1>
+        <button>Mettre à jour</button>
+    </div>
+
+    <!-- Form-->
+     <div class="container">
+        <form id="profileForm">
+        <input id="nom" type="text" placeholder="Nom" required>
+        <input id="prenom" type="text" placeholder="Prenom" required>
+        <input id="email" type="email" placeholder="Email" required>
+        <input id="ville" type="text" placeholder="ville souhaitée">
+        <input id="salaire" type="number" placeholder="Salaire minimum(€)">
+        <select id="contrat">
+            <option value="">Type_contrat</option>
+            <option value="CDI">CDI</option>
+            <option value="CDD">CDD</option>
+            <option value="Stage">Stage</option>
+            <option value="Alternance">Alternance</option>
+        </select>
+        <input id="Competences" type="text" placeholder="Competences (ex:java, Pyhton)">
+        <button type="submit">Envoyer</button>
+        </form>
+     </div>
+</body>
+</html>

@@ -130,7 +130,7 @@ async def recommended_jobs(user_id: str = Query(...)):
     return normalised
 
 
-@app.post("/registers")
+@app.post("/register")
 async def registers(payload: UserRegister):
     user = db.create_user(payload.email, payload.password)
     return {"message": "Utilisateur créé avec succès", "user": user}

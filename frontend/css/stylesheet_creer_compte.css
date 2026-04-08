@@ -1,32 +1,17 @@
+/* Base commune (champs, carte, typo) */
+@import url("stylesheet_se_connecter.css");
+
+/* Inscription : tons violet / rose  */
 body {
-        margin: 0;
-        height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background-color: #f0f2f5;
-        font-family: Arial;
+    background: radial-gradient(1100px 580px at 22% 22%, #f0e0ff 0%, rgba(240, 224, 255, 0) 55%),
+                radial-gradient(850px 480px at 78% 8%, #ffd6ef 0%, rgba(255, 214, 239, 0) 50%),
+                linear-gradient(135deg, #1a0d38 0%, #3a1f5c 40%, #5c2d72 100%);
 }
 
-.box {
-        background: white;
-        padding: 30px;
-        border-radius: 10px;
-        width: 300px;
-        text-align: center;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+body::before {
+    background: rgba(18, 8, 36, 0.30);
 }
 
-input {
-        width: 100%;
-        padding: 10px;
-        margin: 10px 0;
-}
-
-button {
-        width: 100%;
-        padding: 10px;
-        background: blue;
-        color: white;
-        border: none;
+.login-box button {
+    color: #2a1450;
 }

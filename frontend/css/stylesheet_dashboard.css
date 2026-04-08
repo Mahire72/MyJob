@@ -21,13 +21,21 @@ body {
 
 .content {
     width: 70%;
+    padding: 16px;
+    box-sizing: border-box;
 }
 
 .sidebar {
     width: 30%;
+    padding: 16px;
+    box-sizing: border-box;
 }
 
-#map {
+#jobDetails {
     width: 100%;
     height: 100%;
+    background-color: rgba(0, 0, 0, 0.25);
+    border-radius: 12px;
+    padding: 16px;
+    box-sizing: border-box;
 }

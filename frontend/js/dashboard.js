@@ -10,6 +10,8 @@ const API_BASE = "http://127.0.0.1:8000";
 const list = document.getElementById("jobList");
 const detailsBody = document.getElementById("jobDetailsBody");
 const welcomeNameEl = document.getElementById("welcomeName");
+const jobDetailsTitle = document.getElementById("jobDetailsTitle");
+const jobDetailsHint = document.getElementById("jobDetailsHint");
 
 let _offres = [];
 
@@ -71,33 +73,78 @@ function renderDetails(index) {
   const job = _offres[index];
   if (!job) {
     detailsBody.innerHTML = "";
+    if (jobDetailsTitle) jobDetailsTitle.style.display = "";
+    if (jobDetailsHint) jobDetailsHint.style.display = "";
     return;
   }
 
-  // Pour l'instant on affiche les info simplement, je stylise plus tard
-  const rows = [
-    ["Titre", job.titre],
-    ["Entreprise", job.entreprise],
-    ["Lieu", job.lieu],
-    ["Code postal", job.code_postal],
-    ["Type contrat", job.type_contrat],
-    ["Salaire", job.salaire],
-    ["Créé le", job.date_creation],
-    ["Mis à jour", job.date_actualisation],
-    ["URL", job.url],
-    ["Description", job.description],
-  ];
+  if (jobDetailsTitle) jobDetailsTitle.style.display = "none";
+  if (jobDetailsHint) jobDetailsHint.style.display = "none";
+  // on affiche les détails de l'offre
+  //v2 avec un meilleur design
+  const titre = job.titre || "Offre";
+  const entreprise = job.entreprise || "";
+  const lieu = job.lieu || "";
+  const codePostal = job.code_postal || "";
+  const typeContrat = job.type_contrat || "";
+  const salaire = job.salaire || "";
+  const dateCreation = job.date_creation || "";
+  const dateMaj = job.date_actualisation || "";
+  const url = job.url || "";
+  const description = job.description || "";
 
-  detailsBody.innerHTML = rows
-    .filter(([, v]) => v !== null && v !== undefined && String(v).trim() !== "")
-    .map(([k, v]) => {
-      if (k === "URL") {
-        const safe = String(v);
-        return `<div><strong>${k}:</strong> <a href="${safe}" target="_blank" rel="noreferrer">${safe}</a></div>`;
-      }
-      return `<div><strong>${k}:</strong> ${String(v)}</div>`;
-    })
-    .join("");
+  const chips = [
+    typeContrat && { label: typeContrat },
+    salaire && { label: salaire },
+    (lieu || codePostal) && { label: [lieu, codePostal].filter(Boolean).join(" • ") },
+  ].filter(Boolean);
+
+  detailsBody.innerHTML = `
+    <div class="job-detail">
+      <div class="job-detail-title">${escapeHtml(titre)}</div>
+      ${entreprise ? `<div class="job-detail-company">${escapeHtml(entreprise)}</div>` : ""}
+
+      ${chips.length ? `
+        <div class="job-detail-chips">
+          ${chips.map(c => `<span class="chip">${escapeHtml(c.label)}</span>`).join("")}
+        </div>
+      ` : ""}
+
+      ${url ? `
+        <div class="job-detail-actions">
+          <a class="btn-link" href="${escapeAttr(url)}" target="_blank" rel="noreferrer">Voir l'offre</a>
+        </div>
+      ` : ""}
+
+      ${(dateCreation || dateMaj) ? `
+        <div class="job-detail-meta">
+          ${dateCreation ? `<div><strong>Créé le</strong> ${escapeHtml(dateCreation)}</div>` : ""}
+          ${dateMaj ? `<div><strong>Mis à jour</strong> ${escapeHtml(dateMaj)}</div>` : ""}
+        </div>
+      ` : ""}
+
+      ${description ? `
+        <div class="job-detail-section">
+          <div class="job-detail-section-title">Description</div>
+          <div class="job-detail-description">${escapeHtml(description)}</div>
+        </div>
+      ` : ""}
+    </div>
+  `;
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function escapeAttr(value) {
+  // href -> pour les liens
+  return escapeHtml(value);
 }
 
 

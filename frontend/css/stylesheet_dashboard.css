@@ -140,6 +140,7 @@ body::before{
     border-radius: 16px;
     padding: 18px;
     box-sizing: border-box;
+    overflow: auto;
 }
 
 #jobDetails h3{
@@ -157,4 +158,85 @@ body::before{
     margin: 0 0 12px 0;
     opacity: 0.98;
     line-height: 1.5;
+}
+
+.job-detail-title{
+    font-size: 26px;
+    font-weight: 900;
+    letter-spacing: 0.2px;
+    margin-bottom: 6px;
+}
+
+.job-detail-company{
+    font-size: 16px;
+    opacity: 0.95;
+    margin-bottom: 12px;
+}
+
+.job-detail-chips{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.chip{
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.16);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    font-size: 13px;
+    line-height: 1;
+}
+
+.job-detail-actions{
+    margin: 6px 0 14px 0;
+}
+
+.btn-link{
+    display: inline-block;
+    padding: 10px 14px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.92);
+    color: #0b2b4a;
+    text-decoration: none;
+    font-weight: 700;
+}
+
+.btn-link:hover{
+    background: #ffffff;
+}
+
+.job-detail-meta{
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 6px;
+    font-size: 13px;
+    opacity: 0.95;
+    margin-bottom: 14px;
+}
+
+.job-detail-meta strong{
+    margin-right: 6px;
+}
+
+.job-detail-section{
+    margin-top: 8px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.job-detail-section-title{
+    font-size: 14px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    opacity: 0.98;
+}
+
+.job-detail-description{
+    font-size: 14px;
+    line-height: 1.6;
+    opacity: 0.98;
+    white-space: pre-wrap;
 }

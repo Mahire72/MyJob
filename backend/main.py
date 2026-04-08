@@ -1,8 +1,16 @@
 from fastapi import FastAPI, Query
+from fastapi import HTTPException
 from dotenv import load_dotenv
+
+
+#importation des middleware pour la gestion des CORS
+from fastapi.middleware.cors import CORSMiddleware
 
 from src import db, requete_api
 from src.models import UserLogin, UserProfile, UserRegister
+
+
+
 """
 Ce fichier est le fichier principal de l'application.
 Il contient la fonction principale qui permet de lancer l'application.
@@ -32,6 +40,15 @@ load_dotenv()
 app = FastAPI()
 #On initialise la base de données
 db.init_db()
+
+# CORS permet des appels depuis le frontend statique
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 _token: str | None = None
@@ -103,7 +120,7 @@ async def get_profile(user_id: str = Query(...)):
 
 
 @app.get("/jobs/recommended")
-#Fonction pour récupérer les offres recommandées pour un profil donné
+#Route pour récupérer les offres recommandées pour un profil donné
 #/jobs/recommended?profile_id=default
 async def recommended_jobs(user_id: str = Query(...)):
     profile = db.get_profile(user_id)
@@ -131,8 +148,11 @@ async def recommended_jobs(user_id: str = Query(...)):
 
 
 @app.post("/register")
-async def registers(payload: UserRegister):
-    user = db.create_user(payload.email, payload.password)
+async def register(payload: UserRegister):
+    try:
+        user = db.create_user(payload.email, payload.password)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
     return {"message": "Utilisateur créé avec succès", "user": user}
 
 

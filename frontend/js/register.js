@@ -8,6 +8,11 @@ function register() {
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
 
+  if (!email || !password) {
+    alert("Veuillez remplir l'email et le mot de passe.");
+    return;
+  }
+
   // TODO: Ajouter le nom de l'utilisateur
   // const nom = document.getElementById("nom").value;
 
@@ -16,7 +21,20 @@ function register() {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password }),
   })
-    .then((res) => res.json())
+    .then(async (res) => {
+      const text = await res.text();
+      let data = null;
+      try {
+        data = text ? JSON.parse(text) : null;
+      } catch {
+        data = null;
+      }
+      if (!res.ok) {
+        const msg = (data && (data.detail || data.message)) || text || "Erreur lors de l'inscription.";
+        throw new Error(msg);
+      }
+      return data;
+    })
     .then((data) => {
       if (!data || !data.user || !data.user.id) {
         alert("Erreur lors de l'inscription.");
@@ -29,7 +47,7 @@ function register() {
     })
     .catch((err) => {
       console.error(err);
-      alert("Impossible de contacter le serveur.");
+      alert(err && err.message ? err.message : "Impossible de contacter le serveur.");
     });
 }
 

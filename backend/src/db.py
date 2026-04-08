@@ -48,6 +48,9 @@ def init_db() -> None:
             """
             CREATE TABLE IF NOT EXISTS profiles (
                 user_id TEXT PRIMARY KEY,
+                nom TEXT,
+                prenom TEXT,
+                email TEXT,
                 mots_cles TEXT NOT NULL,
                 code_postal TEXT NOT NULL,
                 type_contrat TEXT,
@@ -68,13 +71,17 @@ def create_user(email: str, password: str) -> dict:
     pwd_hash = _hash_password(password, salt)
 
     with _connect() as conn:
-        conn.execute(
-            """
-            INSERT INTO users (id, email, password_salt, password_hash, created_at)
-            VALUES (?, ?, ?, ?, ?)
-            """,
-            (user_id, email, salt, pwd_hash, now),
-        )
+        try:
+            conn.execute(
+                """
+                INSERT INTO users (id, email, password_salt, password_hash, created_at)
+                VALUES (?, ?, ?, ?, ?)
+                """,
+                (user_id, email, salt, pwd_hash, now),
+            )
+        except sqlite3.IntegrityError as e:
+            # Email déjà existant (UNIQUE)
+            raise ValueError("Email déjà utilisé") from e
 
     return {"id": user_id, "email": email, "created_at": now}
 
@@ -104,6 +111,9 @@ def upsert_profile(user_id: str, data: dict) -> dict:
     now = _utc_now()
     row = {
         "user_id": user_id,
+        "nom": data.get("nom"),
+        "prenom": data.get("prenom"),
+        "email": data.get("email"),
         "mots_cles": data["mots_cles"],
         "code_postal": data["code_postal"],
         "type_contrat": data.get("type_contrat"),
@@ -125,9 +135,12 @@ def upsert_profile(user_id: str, data: dict) -> dict:
 
         conn.execute(
             """
-            INSERT INTO profiles (user_id, mots_cles, code_postal, type_contrat, distance_max, salaire_min, created_at, updated_at)
-            VALUES (:user_id, :mots_cles, :code_postal, :type_contrat, :distance_max, :salaire_min, :created_at, :updated_at)
+            INSERT INTO profiles (user_id, nom, prenom, email, mots_cles, code_postal, type_contrat, distance_max, salaire_min, created_at, updated_at)
+            VALUES (:user_id, :nom, :prenom, :email, :mots_cles, :code_postal, :type_contrat, :distance_max, :salaire_min, :created_at, :updated_at)
             ON CONFLICT(user_id) DO UPDATE SET
+                nom=excluded.nom,
+                prenom=excluded.prenom,
+                email=excluded.email,
                 mots_cles=excluded.mots_cles,
                 code_postal=excluded.code_postal,
                 type_contrat=excluded.type_contrat,
@@ -145,7 +158,7 @@ def get_profile(user_id: str) -> dict | None:
     with _connect() as conn:
         #On récupère le profil dans la base de données
         r = conn.execute(
-            "SELECT user_id, mots_cles, code_postal, type_contrat, distance_max, salaire_min, created_at, updated_at FROM profiles WHERE user_id = ?",
+            "SELECT user_id, nom, prenom, email, mots_cles, code_postal, type_contrat, distance_max, salaire_min, created_at, updated_at FROM profiles WHERE user_id = ?",
             (user_id,),
         ).fetchone()
         if r is None:

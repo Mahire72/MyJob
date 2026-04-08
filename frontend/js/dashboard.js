@@ -1,3 +1,8 @@
+/*
+Ce fichier contient les fonctions pour la page dashboard.
+Il contient les fonctions pour afficher les offres d'emploi, les recommandations, etc.
+*/
+
 const API_BASE = "http://127.0.0.1:8000";
 
 const list = document.getElementById("jobList");
@@ -45,6 +50,7 @@ function loadRecommended() {
 }
 
 loadRecommended();
+
 
 function goToProfile(){
     window.location.href = "profile.html"

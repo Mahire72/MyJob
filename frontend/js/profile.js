@@ -53,6 +53,9 @@ function loadProfile() {
 
 // Fonction pour appliquer le profile au formulaire
 function applyProfileToForm(profile) {
+  if (profile.nom != null) document.getElementById("nom").value = profile.nom;
+  if (profile.prenom != null) document.getElementById("prenom").value = profile.prenom;
+  if (profile.email != null) document.getElementById("email").value = profile.email;
   if (profile.mots_cles != null) document.getElementById("Competences").value = profile.mots_cles;
   if (profile.code_postal != null) document.getElementById("code_postal").value = profile.code_postal;
   if (profile.type_contrat != null) document.getElementById("contrat").value = profile.type_contrat;
@@ -111,6 +114,10 @@ function handleSubmit(e) {
 // On les transforme en objet JSON
 // On retourne l'objet JSON
 function getProfilePayload() {
+  const nom = (document.getElementById("nom").value || "").trim();
+  const prenom = (document.getElementById("prenom").value || "").trim();
+  const email = (document.getElementById("email").value || "").trim();
+
   const mots_cles = (document.getElementById("Competences").value || "").trim();
   const code_postal = (document.getElementById("code_postal").value || "").trim();
   const type_contrat = document.getElementById("contrat").value || null;
@@ -121,5 +128,5 @@ function getProfilePayload() {
   const distance_max = distanceRaw === "" ? null : Number(distanceRaw);
   const salaire_min = salaireRaw === "" ? null : Number(salaireRaw);
 
-  return { mots_cles, code_postal, type_contrat, distance_max, salaire_min };
+  return { nom, prenom, email, mots_cles, code_postal, type_contrat, distance_max, salaire_min };
 }

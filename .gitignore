@@ -29,3 +29,7 @@ htmlcov/
 node_modules/
 dist/
 build/
+
+# Local databases
+*.sqlite3
+backend/profiles.sqlite3

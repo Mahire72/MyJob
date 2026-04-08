@@ -5,8 +5,12 @@ from typing import Optional
 Modèle de profil utilisateur
 """
 class UserProfile(BaseModel):
+    nom: Optional[str] = None
+    prenom: Optional[str] = None
+    email: Optional[str] = None
+
     #mots clés de recherche obligatoires
-    #code postal obligatoire 
+    #code postal obligatoire
     mots_cles: str
     type_contrat: Optional[str] = None
     code_postal: str

@@ -1,48 +1,138 @@
+
+/* Connexion : tons cyan / océan */
+
 body {
-        margin: 0;
-        height: 100vh;
-        display: flex;
-        justify-content: center; 
-        align-items: center;
-        background-color: #f2f0f5;
-        font-family: Arial, sans-serif;
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+    box-sizing: border-box;
+    background: radial-gradient(1200px 600px at 18% 18%, #c8f4ef 0%, rgba(200, 244, 239, 0) 55%),
+                radial-gradient(900px 500px at 82% 12%, #9ee5dc 0%, rgba(158, 229, 220, 0) 50%),
+                linear-gradient(135deg, #063542 0%, #0d5a6b 42%, #138798 100%);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    color: #ffffff;
+    position: relative;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: rgba(4, 28, 34, 0.26);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.login-page {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 400px;
 }
 
 .login-box {
-        background: peachpuff;
-        padding: 30px;
-        border-radius: 10px;
-        width: 300px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        text-align: center;
+    background: rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 18px;
+    padding: 32px 28px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.25);
+    text-align: center;
 }
 
-input {
-        width: 100%;
-        padding: 10px;
-        margin: 10px 0;
-        border-radius: 5px;
-        border: 1px solid #ccc;
+.login-box h2 {
+    margin: 0 0 8px 0;
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: 0.3px;
+    text-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
 }
 
-button {
-        width: 100%;
-        padding: 10px;
-        background-color: #007BFF;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
+.login-subtitle {
+    margin: 0 0 24px 0;
+    font-size: 14px;
+    opacity: 0.92;
+    line-height: 1.5;
 }
 
-button:hover {
-        background-color: #0056b3;
+.login-box label {
+    display: block;
+    text-align: left;
+    font-size: 12px;
+    font-weight: 600;
+    opacity: 0.9;
+    margin-bottom: 6px;
+    margin-top: 14px;
 }
 
-a {
-        display: block;
-        margin-top: 10px;
-        text-decoration: none;
-        color: #007BFF;
+.login-box label:first-of-type {
+    margin-top: 0;
 }
-    
+
+.login-box input {
+    width: 100%;
+    padding: 12px 14px;
+    margin: 0;
+    box-sizing: border-box;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    background: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.login-box input::placeholder {
+    color: rgba(255, 255, 255, 0.45);
+}
+
+.login-box input:focus {
+    border-color: rgba(255, 255, 255, 0.45);
+    background: rgba(255, 255, 255, 0.16);
+}
+
+.login-box button {
+    width: 100%;
+    margin-top: 22px;
+    padding: 12px 16px;
+    border: none;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.92);
+    color: #063542;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.12s ease;
+}
+
+.login-box button:hover {
+    background: #ffffff;
+    transform: translateY(-1px);
+}
+
+.login-box .login-footer {
+    margin-top: 20px;
+    padding-top: 18px;
+    border-top: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.login-box a {
+    display: inline-block;
+    margin-top: 0;
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 14px;
+    font-weight: 600;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.35);
+    padding-bottom: 2px;
+    transition: opacity 0.15s ease;
+}
+
+.login-box a:hover {
+    opacity: 1;
+    border-bottom-color: #ffffff;
+}

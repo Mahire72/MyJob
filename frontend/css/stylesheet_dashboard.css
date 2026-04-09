@@ -63,6 +63,12 @@ body::before{
     backdrop-filter: blur(8px);
 }
 
+.header-actions{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
 .header h1{
     margin: 0;
     font-size: 34px;
@@ -79,6 +85,16 @@ body::before{
     color: #0b2b4a;
     cursor: pointer;
     font-weight: 600;
+}
+
+.header button.btn-logout{
+    background: rgba(255, 255, 255, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.26);
+    color: #ffffff;
+}
+
+.header button.btn-logout:hover{
+    background: rgba(255, 255, 255, 0.24);
 }
 
 .header button:hover{

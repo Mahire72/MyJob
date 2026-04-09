@@ -179,3 +179,9 @@ loadRecommended();
 function goToProfile(){
     window.location.href = "profile.html"
 }
+
+function logout() {
+  localStorage.removeItem("user_id");
+  localStorage.removeItem("email");
+  window.location.href = "se_connecter.html";
+}

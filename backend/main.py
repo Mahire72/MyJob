@@ -8,6 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from src import db, requete_api
 from src.models import UserLogin, UserProfile, UserRegister
+from src.auth import create_access_token
 
 
 
@@ -161,4 +162,5 @@ async def login(payload: UserLogin):
     user = db.verify_user(payload.email, payload.password)
     if user is None:
         return {"message": "Identifiants invalides", "user": None}
-    return {"message": "Connexion réussie", "user": user}
+    access_token = create_access_token(user_id=user["id"])
+    return {"message": "Connexion réussie", "user": user, "access_token": access_token, "token_type": "bearer"}

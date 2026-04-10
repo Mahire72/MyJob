@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Créer un compte</title>
+    <link rel="stylesheet" href="css/stylesheet_creer_compte.css">
+</head>
+
+<body>
+<div class="login-page">
+    <div class="login-box">
+        <h2>Créer un compte</h2>
+        <p class="login-subtitle">Inscris-toi pour enregistrer ton profil et voir des offres adaptées.</p>
+
+        <label for="nom">Nom</label>
+        <input id="nom" type="text" autocomplete="family-name" placeholder="Ton nom"/>
+
+        <label for="email">E-mail</label>
+        <input id="email" type="email" autocomplete="email" placeholder="exemple@email.com"/>
+
+        <label for="password">Mot de passe</label>
+        <input id="password" type="password" autocomplete="new-password" placeholder="••••••••"/>
+
+        <button type="button" onclick="register()">S'inscrire</button>
+
+        <div class="login-footer">
+            <a href="se_connecter.html">Déjà un compte ? Se connecter</a>
+        </div>
+    </div>
+</div>
+<!-- JS -->
+<script src="js/register.js" defer></script>
+</body>
+</html>

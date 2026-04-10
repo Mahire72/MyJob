@@ -3,3 +3,5 @@ uvicorn[standard]
 httplib2
 pydantic
 certifi
+python-dotenv
+PyJWT

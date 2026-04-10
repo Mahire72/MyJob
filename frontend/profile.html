@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Modifiez votre Profile</title>
+
+    <!--CSS-->
+    <link rel="stylesheet" href="css/profile.css">
+
+    <!--js-->
+    <script src="js/profile.js" defer></script>
+
+</head>
+<body>
+    <div class="navbar">
+        <h1>Mon Profile</h1>
+        <button id="updateBtn" type="button">Mettre à jour</button>
+    </div>
+
+    <!-- Form-->
+     <div class="container">
+        <form id="profileForm">
+        <input id="nom" type="text" placeholder="Nom" required>
+        <input id="prenom" type="text" placeholder="Prenom" required>
+        <input id="email" type="email" placeholder="Email" required>
+        <input id="code_postal" type="text" placeholder="Code postal (ex: 75013)" inputmode="numeric">
+        <input id="distance_max" type="number" placeholder="Distance max (km)">
+        <input id="salaire_min" type="number" placeholder="Salaire minimum (€ / mois)">
+        <select id="contrat">
+            <option value="">Type_contrat</option>
+            <option value="CDI">CDI</option>
+            <option value="CDD">CDD</option>
+            <option value="Stage">Stage</option>
+            <option value="Alternance">Alternance</option>
+        </select>
+        <input id="Competences" type="text" placeholder="Mots-clés (ex: java, python)">
+        <button type="submit">Envoyer</button>
+        </form>
+     </div>
+</body>
+</html>

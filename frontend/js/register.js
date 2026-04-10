@@ -36,12 +36,14 @@ function register() {
       return data;
     })
     .then((data) => {
-      if (!data || !data.user || !data.user.id) {
+      if (!data || !data.user || !data.user.id || !data.access_token) {
         alert("Erreur lors de l'inscription.");
         return;
       }
       localStorage.setItem("user_id", data.user.id);
       localStorage.setItem("email", email);
+      localStorage.setItem("access_token", data.access_token);
+      localStorage.setItem("token_type", data.token_type || "bearer");
       alert("Compte créé avec succès !");
       window.location.href = "se_connecter.html";
     })

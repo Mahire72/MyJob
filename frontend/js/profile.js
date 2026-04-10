@@ -37,12 +37,27 @@ function getUserId() {
   return localStorage.getItem("user_id");
 }
 
+function getAccessToken() {
+  return localStorage.getItem("access_token");
+}
+
+function ensureConnected() {
+  const token = getAccessToken();
+  if (!token) {
+    window.location.href = "se_connecter.html";
+    return false;
+  }
+  return true;
+}
+
 // Fonction pour charger le profile
 function loadProfile() {
-  const userId = getUserId();
-  if (!userId) return;
+  if (!ensureConnected()) return;
+  const token = getAccessToken();
   // On récupère le profile du serveur
-  fetch(`${API_BASE}/profile?user_id=${encodeURIComponent(userId)}`)
+  fetch(`${API_BASE}/profile`, {
+    headers: { Authorization: `Bearer ${token}` },
+  })
     .then((res) => res.json())
     .then((data) => {
       if (!data || !data.profile) return;
@@ -66,12 +81,8 @@ function applyProfileToForm(profile) {
 // Fonction pour gérer le submit du formulaire
 function handleSubmit(e) {
   e.preventDefault();
-   // On récupère l'ID de l'utilisateur
-  const userId = getUserId();
-  if (!userId) {
-    alert("Vous devez être connecté (user_id manquant).");
-    return;
-  }
+  if (!ensureConnected()) return;
+  const token = getAccessToken();
   // On récupère le payload du profile
   const payload = getProfilePayload();
   if (!payload.mots_cles || !payload.code_postal) {
@@ -80,9 +91,9 @@ function handleSubmit(e) {
   }
 
   // On envoie le payload au serveur
-  fetch(`${API_BASE}/profile?user_id=${encodeURIComponent(userId)}`, {
+  fetch(`${API_BASE}/profile`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
     body: JSON.stringify(payload),
   })
     .then(async (res) => {

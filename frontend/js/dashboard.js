@@ -21,6 +21,19 @@ function getUserId() {
   return localStorage.getItem("user_id");
 }
 
+function getAccessToken() {
+  return localStorage.getItem("access_token");
+}
+
+function ensureConnected() {
+  const token = getAccessToken();
+  if (!token) {
+    window.location.href = "se_connecter.html";
+    return false;
+  }
+  return true;
+}
+
 //le petit "Bon retour, [nom] [prenom]"
 function setWelcomeName(profile) {
   if (!welcomeNameEl) return;
@@ -31,9 +44,11 @@ function setWelcomeName(profile) {
 }
 
 function loadProfileForWelcome() {
-  const userId = getUserId();
-  if (!userId) return;
-  fetch(`${API_BASE}/profile?user_id=${encodeURIComponent(userId)}`)
+  if (!ensureConnected()) return;
+  const token = getAccessToken();
+  fetch(`${API_BASE}/profile`, {
+    headers: { Authorization: `Bearer ${token}` },
+  })
     .then((res) => res.json())
     .then((data) => {
       if (!data || !data.profile) return;
@@ -152,13 +167,11 @@ function escapeAttr(value) {
 // Elle récupère les offres recommandées pour l'utilisateur
 //et les affiches
 function loadRecommended() {
-  const userId = getUserId();
-  if (!userId) {
-    renderJobs([]);
-    return;
-  }
-
-  fetch(`${API_BASE}/jobs/recommended?user_id=${encodeURIComponent(userId)}`)
+  if (!ensureConnected()) return;
+  const token = getAccessToken();
+  fetch(`${API_BASE}/jobs/recommended`, {
+    headers: { Authorization: `Bearer ${token}` },
+  })
     .then((res) => res.json())
     .then((data) => {
       const offres = data && data.offres ? data.offres : [];
@@ -183,5 +196,7 @@ function goToProfile(){
 function logout() {
   localStorage.removeItem("user_id");
   localStorage.removeItem("email");
+  localStorage.removeItem("access_token");
+  localStorage.removeItem("token_type");
   window.location.href = "se_connecter.html";
 }

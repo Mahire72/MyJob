@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Query
+from fastapi import Depends, FastAPI, Query
 from fastapi import HTTPException
 from dotenv import load_dotenv
 
@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from src import db, requete_api
 from src.models import UserLogin, UserProfile, UserRegister
-from src.auth import create_access_token
+from src.auth import create_access_token, get_current_user_id
 
 
 
@@ -98,7 +98,7 @@ async def jobs(
 @app.post("/profile")
 async def create_or_update_profile(
     profile: UserProfile,
-    user_id: str = Query(...),
+    user_id: str = Depends(get_current_user_id),
 ):
     stored = db.upsert_profile(user_id, profile.model_dump())
     return {
@@ -107,7 +107,7 @@ async def create_or_update_profile(
     }
 
 @app.get("/profile")
-async def get_profile(user_id: str = Query(...)):
+async def get_profile(user_id: str = Depends(get_current_user_id)):
     profile = db.get_profile(user_id)
     if profile is None:
         return {
@@ -123,7 +123,7 @@ async def get_profile(user_id: str = Query(...)):
 @app.get("/jobs/recommended")
 #Route pour récupérer les offres recommandées pour un profil donné
 #/jobs/recommended?profile_id=default
-async def recommended_jobs(user_id: str = Query(...)):
+async def recommended_jobs(user_id: str = Depends(get_current_user_id)):
     profile = db.get_profile(user_id)
     if profile is None:
         return {
@@ -154,7 +154,13 @@ async def register(payload: UserRegister):
         user = db.create_user(payload.email, payload.password)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
-    return {"message": "Utilisateur créé avec succès", "user": user}
+    access_token = create_access_token(user_id=user["id"])
+    return {
+        "message": "Utilisateur créé avec succès",
+        "user": user,
+        "access_token": access_token,
+        "token_type": "bearer",
+    }
 
 
 @app.post("/login")

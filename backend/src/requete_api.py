@@ -17,8 +17,9 @@ _
 Les variables d'environnement sont :
 - FRANCE_TRAVAIL_CLIENT_ID : l'ID du client
 - FRANCE_TRAVAIL_CLIENT_SECRET : le secret du client
-- FRANCE_TRAVAIL_SCOPE : le scope de l'accès
 - DISABLE_SSL_CERT_VALIDATION : pour désactiver la validation du certificat SSL
+
+Le scope OAuth France Travail est fixe : voir FRANCE_TRAVAIL_OAUTH_SCOPE ci-dessous.
 
 - _http() : pour créer une instance de la classe Http de la librairie httplib2
 - _require_secrets() : pour vérifier si les variables d'environnement sont présentes
@@ -29,12 +30,14 @@ Les variables d'environnement sont :
 ACCESS_POINT = "https://entreprise.francetravail.fr/connexion/oauth2/access_token?realm=%2Fpartenaire"
 Recherche_API = "https://api.francetravail.io/partenaire/offresdemploi/v2/offres/search"
 
+# Scope OAuth imposé par l'API partenaire (ne pas surcharger via .env)
+FRANCE_TRAVAIL_OAUTH_SCOPE = "api_offresdemploiv2 o2dsoffre"
+
 # Charger les variables d'environnement
 load_dotenv()
 
 client_id = os.getenv("FRANCE_TRAVAIL_CLIENT_ID")
 client_secret = os.getenv("FRANCE_TRAVAIL_CLIENT_SECRET")
-scope = os.getenv("FRANCE_TRAVAIL_SCOPE", "api_offresdemploiv2 o2dsoffre")
 
 # Vérifier si la validation du certificat SSL est désactivée
 # Si oui, on désactive la validation du certificat SSL
@@ -72,7 +75,7 @@ def get_token():
         + "&client_secret="
         + client_secret
         + "&scope="
-        + scope
+        + FRANCE_TRAVAIL_OAUTH_SCOPE
     )
     reponse, data = _http().request(
         ACCESS_POINT, method="POST", headers=header, body=body

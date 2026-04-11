@@ -40,6 +40,14 @@ body::before{
     text-shadow: 0 10px 25px rgba(0,0,0,0.35);
 }
 
+.navbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
 .navbar button {
     border: 0;
     padding: 10px 14px;
@@ -52,6 +60,16 @@ body::before{
 
 .navbar button:hover{
     background: #ffffff;
+}
+
+.navbar button.btn-back {
+    background: rgba(255, 255, 255, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.26);
+    color: #ffffff;
+}
+
+.navbar button.btn-back:hover {
+    background: rgba(255, 255, 255, 0.28);
 }
 
 .container {

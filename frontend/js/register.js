@@ -16,7 +16,7 @@ function register() {
   // TODO: Ajouter le nom de l'utilisateur
   // const nom = document.getElementById("nom").value;
 
-  fetch("http://127.0.0.1:8000/register", {
+  fetch("https://myjob.2in013projet.info/register", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password }),

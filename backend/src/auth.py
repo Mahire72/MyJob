@@ -17,9 +17,9 @@ Ce fichier contient les fonctions pour la creation et la verification des tokens
 
 load_dotenv()
 
-JWT_SECRET = (os.getenv("API_KEY3") or os.getenv("JWT_SECRET") or "").strip()
+JWT_SECRET = (os.getenv("API_KEY2") or "").strip()
 if not JWT_SECRET:
-    raise RuntimeError("Secret manquant : API_KEY3 (déploiement) ou JWT_SECRET (local)")
+    raise RuntimeError("Secret JWT manquant : définir API_KEY2")
 
 _bearer = HTTPBearer()
 

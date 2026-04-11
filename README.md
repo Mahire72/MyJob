@@ -16,6 +16,7 @@ Projet web simple pour rechercher des offres d’emploi (API France Travail), g�
 
 - Python 3.10+ (recommandé)
 - `pip`
+- Docker (optionnel)
 
 ## Installation (backend)
 
@@ -29,7 +30,7 @@ pip install -r requirements.txt
 
 ## Variables d’environnement
 
-Le backend lit un fichier `backend/.env` (via `python-dotenv`).
+Le backend lit un fichier `backend/.env` (via `python-dotenv`). Un modèle est fourni dans `backend/.env.example` : copiez-le vers `backend/.env` et adaptez les valeurs.
 
 Variables importantes :
 
@@ -50,6 +51,47 @@ L’API démarre par défaut sur `http://127.0.0.1:8000`.
 
 La base SQLite est créée automatiquement au lancement (fichier `backend/profiles.sqlite3`).
 
+## Docker
+
+Racine du dépôt, `backend/.env` présent pour le build.
+
+**Compose (API + frontend)**
+
+```bash
+docker compose up --build
+```
+
+```bash
+docker compose down
+```
+
+- http://127.0.0.1:8080 — frontend  
+- http://127.0.0.1:8000 — API  
+
+**Backend seul**
+
+```bash
+docker build -t myjob-api ./backend
+docker run --rm -p 8000:8000 myjob-api
+```
+
+```bash
+docker run --rm -p 8000:8000 --env-file backend/.env myjob-api
+```
+
+```bash
+docker run --rm -p 8000:8000 -e JWT_SECRET="..." myjob-api
+```
+
+SQLite sur l’hôte :
+
+```bash
+touch backend/profiles.sqlite3
+docker run --rm -p 8000:8000 --env-file backend/.env \
+  -v "$(pwd)/backend/profiles.sqlite3:/app/profiles.sqlite3" \
+  myjob-api
+```
+
 ## Lancer le frontend
 
 Le frontend est statique. Le plus simple est d’ouvrir les fichiers HTML dans un navigateur :
@@ -58,6 +100,15 @@ Le frontend est statique. Le plus simple est d’ouvrir les fichiers HTML dans u
 - `frontend/creer_compte.html` (création de compte)
 - `frontend/dashboard.html` (dashboard)
 - `frontend/profile.html` (profil)
+
+**Frontend seul**
+
+```bash
+docker build -t myjob-web ./frontend
+docker run --rm -p 8080:80 myjob-web
+```
+
+http://127.0.0.1:8080/
 
 ## Authentification (résumé)
 

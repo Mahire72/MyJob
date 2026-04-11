@@ -14,9 +14,9 @@ _
 - toujours_valide() : pour vérifier si le token est toujours valide
 - jobs_ville() : pour rechercher les offres d'emploi pour une ville donnée
 
-Les variables d'environnement sont :
-- FRANCE_TRAVAIL_CLIENT_ID : l'ID du client
-- FRANCE_TRAVAIL_CLIENT_SECRET : le secret du client
+Les variables d'environnement (déploiement student-docker : API_KEY1, API_KEY2, API_KEY3) :
+- API_KEY1 : identifiant client France Travail (OAuth)
+- API_KEY3 : secret client France Travail (OAuth)
 - DISABLE_SSL_CERT_VALIDATION : pour désactiver la validation du certificat SSL
 
 Le scope OAuth France Travail est fixe : voir FRANCE_TRAVAIL_OAUTH_SCOPE ci-dessous.
@@ -36,8 +36,8 @@ FRANCE_TRAVAIL_OAUTH_SCOPE = "api_offresdemploiv2 o2dsoffre"
 # Charger les variables d'environnement
 load_dotenv()
 
-client_id = os.getenv("FRANCE_TRAVAIL_CLIENT_ID")
-client_secret = os.getenv("FRANCE_TRAVAIL_CLIENT_SECRET")
+client_id = (os.getenv("API_KEY1") or "").strip()
+client_secret = (os.getenv("API_KEY3") or "").strip()
 
 # Vérifier si la validation du certificat SSL est désactivée
 # Si oui, on désactive la validation du certificat SSL
@@ -61,7 +61,7 @@ def _http() -> httplib2.Http:
 def _require_secrets() -> None:
     if not client_id or not client_secret:
         raise RuntimeError(
-            "Il manque les variables d'environnement"
+            "Identifiants France Travail manquants : API_KEY1 et API_KEY3"
         )
 
 

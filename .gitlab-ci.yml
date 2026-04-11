@@ -1,0 +1,14 @@
+stages:
+  - etape_1
+  - etape_2
+
+rebuild:
+  stage: etape_1
+  script:
+    - sudo student-docker "MyJob" down
+    - sudo student-docker "MyJob" up $FRANCE_TRAVAIL_CLIENT_ID $FRANCE_TRAVAIL_CLIENT_SECRET
+
+logs:
+  stage: etape_2
+  script:
+    - sudo student-docker "MyJob" logs

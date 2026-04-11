@@ -1,7 +1,9 @@
-from fastapi import Depends, FastAPI, Query
-from fastapi import HTTPException
 from dotenv import load_dotenv
 
+load_dotenv()
+
+from fastapi import Depends, FastAPI, Query
+from fastapi import HTTPException
 
 #importation des middleware pour la gestion des CORS
 from fastapi.middleware.cors import CORSMiddleware
@@ -36,8 +38,6 @@ Les fonctionnalités sont :
 - Se connecter à l'application
 """
 
-# Charger les variables d'environnement
-load_dotenv()
 app = FastAPI()
 #On initialise la base de données
 db.init_db()

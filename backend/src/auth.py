@@ -3,6 +3,7 @@ import time
 from datetime import timedelta
 
 import jwt
+from dotenv import load_dotenv
 from fastapi import Depends, HTTPException
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
@@ -14,9 +15,11 @@ Ce fichier contient les fonctions pour la creation et la verification des tokens
 - get_current_user_id() : pour la récupération de l'id de l'utilisateur connecté
 """
 
-JWT_SECRET = os.getenv("JWT_SECRET")
-if not JWT_SECRET or not JWT_SECRET.strip():
-    raise RuntimeError("JWT_SECRET manquant : définis la variable d'environnement JWT_SECRET")
+load_dotenv()
+
+JWT_SECRET = (os.getenv("API_KEY3") or os.getenv("JWT_SECRET") or "").strip()
+if not JWT_SECRET:
+    raise RuntimeError("Secret manquant : API_KEY3 (déploiement) ou JWT_SECRET (local)")
 
 _bearer = HTTPBearer()
 

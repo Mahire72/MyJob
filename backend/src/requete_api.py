@@ -36,8 +36,8 @@ FRANCE_TRAVAIL_OAUTH_SCOPE = "api_offresdemploiv2 o2dsoffre"
 # Charger les variables d'environnement
 load_dotenv()
 
-client_id = os.getenv("FRANCE_TRAVAIL_CLIENT_ID")
-client_secret = os.getenv("FRANCE_TRAVAIL_CLIENT_SECRET")
+client_id = os.getenv("API_KEY1") or os.getenv("FRANCE_TRAVAIL_CLIENT_ID")
+client_secret = os.getenv("API_KEY2") or os.getenv("FRANCE_TRAVAIL_CLIENT_SECRET")
 
 # Vérifier si la validation du certificat SSL est désactivée
 # Si oui, on désactive la validation du certificat SSL

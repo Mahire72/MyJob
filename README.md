@@ -35,7 +35,7 @@ Le backend lit un fichier `backend/.env` (via `python-dotenv`). Un modèle est f
 Variables importantes :
 
 - **`JWT_SECRET`** : secret pour signer les tokens JWT (obligatoire)
-- **`FRANCE_TRAVAIL_CLIENT_ID`**, **`FRANCE_TRAVAIL_CLIENT_SECRET`**, **`FRANCE_TRAVAIL_SCOPE`** : accès à l’API France Travail
+- **`FRANCE_TRAVAIL_CLIENT_ID`**, **`FRANCE_TRAVAIL_CLIENT_SECRET`** : accès à l’API France Travail (le scope OAuth est fixe dans `backend/src/requete_api.py`)
 - **`DISABLE_SSL_CERT_VALIDATION`** : uniquement pour debug 
 
 
@@ -58,7 +58,8 @@ Racine du dépôt, `backend/.env` présent pour le build.
 **Compose (API + frontend)**
 
 ```bash
-docker compose up --build
+sudo apt install docker-compose
+docker-compose up --build
 ```
 
 ```bash

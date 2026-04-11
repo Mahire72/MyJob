@@ -6,7 +6,7 @@ rebuild:
   stage: etape_1
   script:
     - sudo student-docker "MyJob" down
-    - sudo student-docker "MyJob" up $FRANCE_TRAVAIL_CLIENT_ID $FRANCE_TRAVAIL_CLIENT_SECRET
+    - sudo student-docker "MyJob" up $FRANCE_TRAVAIL_CLIENT_ID $FRANCE_TRAVAIL_CLIENT_SECRET $JWT_SECRET
 
 logs:
   stage: etape_2

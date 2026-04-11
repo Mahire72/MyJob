@@ -14,7 +14,7 @@
 document.addEventListener("DOMContentLoaded", init);
 
 // a ajouter dans env si joublie pas lol
-const API_BASE = "https://myjob.2in013projet.info";
+const API_BASE = "https://myjob.2in013projet.info/api";
 
 // Fonction pour initialiser le profile
 function init() {

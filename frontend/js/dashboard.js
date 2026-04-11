@@ -4,7 +4,7 @@ Il contient les fonctions pour afficher les offres d'emploi, les recommandations
 Je vais pas trop ajouter de commentaires car chaque fonction est assez simple et claire. (je pense xd)
 */
 
-const API_BASE = "https://myjob.2in013projet.info";
+const API_BASE = "https://myjob.2in013projet.info/api";
 
 const list = document.getElementById("jobList");
 const detailsBody = document.getElementById("jobDetailsBody");

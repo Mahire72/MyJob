@@ -66,29 +66,29 @@ docker-compose up --build
 docker compose down
 ```
 
-- http://127.0.0.1:8080 — frontend  
-- http://127.0.0.1:8000 — API  
+- http://127.0.0.1 — frontend (port 80)  
+- http://127.0.0.1:8080 — API  
 
 **Backend seul**
 
 ```bash
 docker build -t myjob-api ./backend
-docker run --rm -p 8000:8000 myjob-api
+docker run --rm -p 8080:8080 myjob-api
 ```
 
 ```bash
-docker run --rm -p 8000:8000 --env-file backend/.env myjob-api
+docker run --rm -p 8080:8080 --env-file backend/.env myjob-api
 ```
 
 ```bash
-docker run --rm -p 8000:8000 -e JWT_SECRET="..." myjob-api
+docker run --rm -p 8080:8080 -e JWT_SECRET="..." myjob-api
 ```
 
 SQLite sur l’hôte :
 
 ```bash
 touch backend/profiles.sqlite3
-docker run --rm -p 8000:8000 --env-file backend/.env \
+docker run --rm -p 8080:8080 --env-file backend/.env \
   -v "$(pwd)/backend/profiles.sqlite3:/app/profiles.sqlite3" \
   myjob-api
 ```
@@ -106,10 +106,10 @@ Le frontend est statique. Le plus simple est d’ouvrir les fichiers HTML dans u
 
 ```bash
 docker build -t myjob-web ./frontend
-docker run --rm -p 8080:80 myjob-web
+docker run --rm -p 80:80 myjob-web
 ```
 
-http://127.0.0.1:8080/
+http://127.0.0.1/
 
 ## Authentification (résumé)
 

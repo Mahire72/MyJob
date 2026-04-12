@@ -16,6 +16,8 @@ def extraire_salaire(salaire_str):
     #on extrait les nombres (\d) avec point ou pas (\.?) une ou plusieurs fois car findall retourne une liste
     nombres = re.findall(r'\d+\.?\d+', salaire_str)
     
+    if not nombres:
+        return None
 
     salaire_min = float(nombres[0])
     salaire_str_lower = salaire_str.lower()

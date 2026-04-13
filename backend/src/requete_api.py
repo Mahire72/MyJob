@@ -94,7 +94,7 @@ def toujours_valide(token):
     try:
         reponse, data = _http().request(url, method="GET", headers=headers)
         return reponse.status != 400
-    except exception as e:
+    except Exception as e:
         print("Erreur dans toujours_valide: ", repr(e))
         return false
 

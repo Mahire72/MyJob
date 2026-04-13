@@ -90,9 +90,13 @@ def toujours_valide(token):
 
     url = "https://api.francetravail.io/partenaire/offresdemploi/v2/offres/search?motsCles=developpeur"
 
-    reponse, data = _http().request(url, method="GET", headers=headers)
-
-    return reponse.status != 400
+   
+    try:
+        reponse, data = _http().request(url, method="GET", headers=headers)
+        return reponse.status != 400
+    except exception as e:
+        print("Erreur dans toujours_valide: ", repr(e))
+        return false
 
 
 def jobs_ville(

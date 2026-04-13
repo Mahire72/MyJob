@@ -93,10 +93,10 @@ def toujours_valide(token):
    
     try:
         reponse, data = _http().request(url, method="GET", headers=headers)
-        return reponse.status != 400
+        return 200 <= reponse.status < 300
     except Exception as e:
         print("Erreur dans toujours_valide: ", repr(e))
-        return false
+        return False
 
 
 def jobs_ville(
